@@ -17,6 +17,35 @@ textarea {
   margin: 0.5rem 0;
 }
 
+.projects {
+  margin: 1rem;
+  width: 60%;
+  background-color: whitesmoke;
+  border: 1px solid #ff0062;
+}
+
+.projects h2 {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 0;
+  color: white;
+  text-transform: capitalize;
+  font-size: 1.7rem;
+  background-color: #ff0062;
+}
+.projects:last-child {
+  border: 1px solid #0043ff;
+}
+.projects:last-child h2 {
+  background-color: #0043ff;
+}
+
+#active-projects-list,
+#finished-projects-list {
+  width: 100%;
+  background-color: whitesmoke;
+}
+
 .projects ul {
   list-style: none;
   margin: 0;
@@ -58,5 +87,29 @@ textarea {
 #user-input {
   margin: 1rem;
   padding: 1rem;
-  border: 1px solid #f7f7f7;
+  border: 2px solid #ff1d56;
+  background-color: #f6f6f6;
+  width: 60%;
+}
+
+#user-input label {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+#user-input input,
+#user-input textarea {
+  width: 70%;
+  font-size: 1.1rem;
+  border: 1px solid lightgrey;
+}
+
+#user-input button {
+  outline: none;
+  padding: 1rem;
+  color: white;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+  background-color: #ff1d56;
+  border: none;
 }

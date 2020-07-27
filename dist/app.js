@@ -69,11 +69,16 @@ var ProjectList = /** @class */ (function () {
     }
     ProjectList.prototype.renderProjects = function () {
         var listElem = document.getElementById(this.type + "-projects-list");
+        this.clearContent();
         this.assignedProjects.forEach(function (prjItem) {
             var listItem = document.createElement('li');
             listItem.textContent = prjItem.title;
             listElem.appendChild(listItem);
         });
+    };
+    ProjectList.prototype.clearContent = function () {
+        var listElem = document.getElementById(this.type + "-projects-list");
+        listElem.innerHTML = '';
     };
     ProjectList.prototype.renderContent = function () {
         var listId = this.type + "-projects-list";

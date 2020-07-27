@@ -91,11 +91,21 @@ class ProjectList {
     const listElem = document.getElementById(
       `${this.type}-projects-list`
     )! as HTMLUListElement
+
+    this.clearContent()
+
     this.assignedProjects.forEach(prjItem => {
       const listItem = document.createElement('li')
       listItem.textContent = prjItem.title
       listElem.appendChild(listItem)
     })
+  }
+
+  private clearContent() {
+    const listElem = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement
+    listElem.innerHTML = ''
   }
 
   private renderContent() {
