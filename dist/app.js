@@ -54,16 +54,27 @@ var ProjectList = /** @class */ (function () {
     function ProjectList(type) {
         var _this = this;
         this.type = type;
-        this.assignedProjects = [];
         this.templateElement = document.getElementById('project-list');
         this.hostElement = document.getElementById('app');
+        this.assignedProjects = [];
         var importedNode = document.importNode(this.templateElement.content, true);
         this.element = importedNode.firstElementChild;
         this.element.id = this.type + "-projects";
-        prjState.addListener(function (projects) { return (_this.assignedProjects = projects); });
+        prjState.addListener(function (projects) {
+            _this.assignedProjects = projects;
+            _this.renderProjects();
+        });
         this.attach();
         this.renderContent();
     }
+    ProjectList.prototype.renderProjects = function () {
+        var listElem = document.getElementById(this.type + "-projects-list");
+        this.assignedProjects.forEach(function (prjItem) {
+            var listItem = document.createElement('li');
+            listItem.textContent = prjItem.title;
+            listElem.appendChild(listItem);
+        });
+    };
     ProjectList.prototype.renderContent = function () {
         var listId = this.type + "-projects-list";
         this.element.querySelector('ul').id = listId;
@@ -128,7 +139,7 @@ var ProjectInput = /** @class */ (function () {
         var userInput = this.gatherUserInput();
         if (Array.isArray(userInput)) {
             var title = userInput[0], desc = userInput[1], people = userInput[2];
-            console.log({ userInput: userInput });
+            prjState.addProject(title, desc, people);
             this.clearInputs();
         }
     };
@@ -165,7 +176,9 @@ var ProjectState = /** @class */ (function () {
             people: people,
         };
         this.projects.push(newProject);
-        this.listeners.forEach(function (listenerFn) { return listenerFn(__spreadArrays(_this.projects)); });
+        this.listeners.forEach(function (listenerFn) {
+            listenerFn(__spreadArrays(_this.projects));
+        });
     };
     return ProjectState;
 }());

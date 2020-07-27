@@ -65,24 +65,37 @@ class ProjectList {
   templateElement: HTMLTemplateElement
   hostElement: HTMLDivElement
   element: HTMLElement
-  assignedProjects: any[] = []
+  assignedProjects: any[]
 
   constructor(private type: 'active' | 'finished') {
     this.templateElement = document.getElementById(
       'project-list'
     )! as HTMLTemplateElement
     this.hostElement = document.getElementById('app')! as HTMLDivElement
+    this.assignedProjects = []
 
     const importedNode = document.importNode(this.templateElement.content, true)
     this.element = importedNode.firstElementChild! as HTMLElement
     this.element.id = `${this.type}-projects`
 
-    prjState.addListener(
-      (projects: any[]) => (this.assignedProjects = projects)
-    )
+    prjState.addListener((projects: any[]) => {
+      this.assignedProjects = projects
+      this.renderProjects()
+    })
 
     this.attach()
     this.renderContent()
+  }
+
+  private renderProjects() {
+    const listElem = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement
+    this.assignedProjects.forEach(prjItem => {
+      const listItem = document.createElement('li')
+      listItem.textContent = prjItem.title
+      listElem.appendChild(listItem)
+    })
   }
 
   private renderContent() {
@@ -175,7 +188,7 @@ class ProjectInput {
     const userInput = this.gatherUserInput()
     if (Array.isArray(userInput)) {
       const [title, desc, people] = userInput
-      console.log({ userInput })
+      prjState.addProject(title, desc, people)
       this.clearInputs()
     }
   }
@@ -213,7 +226,9 @@ class ProjectState {
       people,
     }
     this.projects.push(newProject)
-    this.listeners.forEach(listenerFn => listenerFn([...this.projects]))
+    this.listeners.forEach(listenerFn => {
+      listenerFn([...this.projects])
+    })
   }
 }
 
