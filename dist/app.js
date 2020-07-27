@@ -5,6 +5,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 function validate(validataleInput) {
     var isValid = true;
     if (validataleInput.required) {
@@ -45,12 +52,15 @@ function autobind(target, methodName, descriptor) {
 // ProjectList Class
 var ProjectList = /** @class */ (function () {
     function ProjectList(type) {
+        var _this = this;
         this.type = type;
+        this.assignedProjects = [];
         this.templateElement = document.getElementById('project-list');
         this.hostElement = document.getElementById('app');
         var importedNode = document.importNode(this.templateElement.content, true);
         this.element = importedNode.firstElementChild;
         this.element.id = this.type + "-projects";
+        prjState.addListener(function (projects) { return (_this.assignedProjects = projects); });
         this.attach();
         this.renderContent();
     }
@@ -133,6 +143,33 @@ var ProjectInput = /** @class */ (function () {
     ], ProjectInput.prototype, "submitHandler", null);
     return ProjectInput;
 }());
+// Project State Management
+var ProjectState = /** @class */ (function () {
+    function ProjectState() {
+        this.listeners = [];
+        this.projects = [];
+    }
+    ProjectState.getInstance = function () {
+        if (!this.instance)
+            this.instance = new ProjectState();
+        return this.instance;
+    };
+    ProjectState.prototype.addListener = function (listernerFn) {
+        this.listeners.push(listernerFn);
+    };
+    ProjectState.prototype.addProject = function (title, description, people) {
+        var _this = this;
+        var newProject = {
+            title: title,
+            description: description,
+            people: people,
+        };
+        this.projects.push(newProject);
+        this.listeners.forEach(function (listenerFn) { return listenerFn(__spreadArrays(_this.projects)); });
+    };
+    return ProjectState;
+}());
+var prjState = ProjectState.getInstance();
 var prjInput = new ProjectInput();
 var activePrjList = new ProjectList('active');
 var finishedPrjList = new ProjectList('finished');

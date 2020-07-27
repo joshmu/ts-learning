@@ -65,6 +65,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement
   hostElement: HTMLDivElement
   element: HTMLElement
+  assignedProjects: any[] = []
 
   constructor(private type: 'active' | 'finished') {
     this.templateElement = document.getElementById(
@@ -75,6 +76,10 @@ class ProjectList {
     const importedNode = document.importNode(this.templateElement.content, true)
     this.element = importedNode.firstElementChild! as HTMLElement
     this.element.id = `${this.type}-projects`
+
+    prjState.addListener(
+      (projects: any[]) => (this.assignedProjects = projects)
+    )
 
     this.attach()
     this.renderContent()
@@ -184,6 +189,35 @@ class ProjectInput {
   }
 }
 
+// Project State Management
+class ProjectState {
+  listeners: any[] = []
+  projects: any[] = []
+  private static instance: ProjectState
+
+  private constructor() {}
+
+  static getInstance() {
+    if (!this.instance) this.instance = new ProjectState()
+    return this.instance
+  }
+
+  addListener(listernerFn: Function) {
+    this.listeners.push(listernerFn)
+  }
+
+  addProject(title: string, description: string, people: number) {
+    const newProject = {
+      title,
+      description,
+      people,
+    }
+    this.projects.push(newProject)
+    this.listeners.forEach(listenerFn => listenerFn([...this.projects]))
+  }
+}
+
+const prjState = ProjectState.getInstance()
 const prjInput = new ProjectInput()
 const activePrjList = new ProjectList('active')
 const finishedPrjList = new ProjectList('finished')
